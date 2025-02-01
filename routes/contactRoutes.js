@@ -8,26 +8,23 @@ const Router = express.Router();
 // ✔ .route("/") returns a route handler object, and .get() & .post() are methods of that object.
 // ✔ If you put a semicolon (;) after .get(), it ends the statement, breaking the chain.
 
-Router.route("/")
-    .get((req, res) => {
-        res.status(200).json({ message: "Get all contacts" });
-    })
-    .post((req,res)=>{
-        res.status(200).json({message:"Create Contact"});
-    });
+const { getContacts,
+        createContact,
+        getContact,
+        updateContact,
+        deleteContact
 
+} = require("../controllers/contactControllers");
+
+
+Router.route("/")
+    .get(getContacts)
+    .post(createContact);
 
 Router.route("/:id")
-    .get((req,res)=>{
-        res.status(200).json({message: `Get contact for ${req.params.id}`});
-    })
-    .put((req,res)=>{
-        res.status(200).json({message: `Update contact for ${req.params.id}`});
-    })
-    .delete((req,res)=>{
-        res.status(200).json({message: `Delete contact for ${req.params.id}`});
-    });
+    .get(getContact)
+    .put(updateContact)
+    .delete(deleteContact);
 
-    
-    module.exports = Router;
-    
+
+module.exports = Router;

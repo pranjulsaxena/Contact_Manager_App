@@ -17,6 +17,8 @@ const { getContacts,
 } = require("../controllers/contactControllers");
 
 
+
+// below are defined multiple methods per route.
 Router.route("/")
     .get(getContacts)
     .post(createContact);

@@ -11,7 +11,7 @@ const contactSchema = new Schema({
         type:String,
         required: [true,"Please add the contact email address"],
     },
-    phone:{
+    contact:{
         type:String,
         required: [true, "Please add the contact phone number"],
     }

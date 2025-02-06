@@ -1,27 +1,46 @@
 const asyncHandler = require("express-async-handler");
-
+const userModel = require("../models/userModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //@desc Register a user
 //@route post /api/v1/users/register
 // access:public
-const registerController = asyncHandler(async (req, res)=>{
-  res.json("hello motto");
+
+const registerController = asyncHandler(async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory!!");
+  }
+  const userAvailable = await userModel.findOne({email});
+  if (userAvailable){
+    res.status(400);
+    throw new Error("User already registered!!");
+  }
+  const hashedPassword = await bcrypt.hash(password,10);
+  console.log("Hashed Password : ",hashedPassword);
+  
+  const newUser = await userModel.create({ username, email, password:hashedPassword });
+  res.json({
+    message: "user registered successfuly!!",newUser 
+  })
 });
 
 
 //@desc Login by user
 //@route post /api/v1/users/login
 // access:public
-const loginController = asyncHandler(async (req,res)=>{
-    res.json("hello motto");
+const loginController = asyncHandler(async (req, res) => {
+ 
 });
 
 
 //@desc Register a user
 //@route post /api/v1/users/current
 // access:private (only logged in user can accessed it only.)
-const currentController = asyncHandler(async function(req,res){
-    res.json({message:"hello motto"});
+const currentController = asyncHandler(async function (req, res) {
+  res.json({ message: "hello motto" });
 })
 
 
@@ -30,4 +49,4 @@ const currentController = asyncHandler(async function(req,res){
 
 
 
-module.exports = {registerController,loginController,currentController};
+module.exports = { registerController, loginController, currentController };

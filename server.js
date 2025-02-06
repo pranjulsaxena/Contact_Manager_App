@@ -3,7 +3,6 @@ const errorHandler = require("./middleware/errorHandler.js");
 const dotenv = require("dotenv").config();
 const app = express();
 const connectDb = require("./config/dbConnection.js");
-
 connectDb();
 
  // Default to 3000 if PORT is not set

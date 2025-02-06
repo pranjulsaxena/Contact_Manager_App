@@ -56,9 +56,9 @@ const loginController = asyncHandler(async (req, res) => {
           id:user._id
         }
       }
-      ,secret,{expiresIn:"1m"});
+      ,secret);
 
-      res.json({token});
+      res.status(200).json({token});
   }else{
     res.status(401);
     throw new Error("Invalid Credentials!!");
@@ -69,14 +69,12 @@ const loginController = asyncHandler(async (req, res) => {
 //@desc Register a user
 //@route post /api/v1/users/current
 // access:private (only logged in user can accessed it only.)
+
+
 const currentController = asyncHandler(async function (req, res) {
-  res.json({ message: "hello motto" });
+  const user = req.user;
+  res.json({user});
 })
-
-
-
-
-
 
 
 module.exports = { registerController, loginController, currentController };

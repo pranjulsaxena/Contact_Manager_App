@@ -2,7 +2,9 @@ const asyncHandler = require("express-async-handler");
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const { json } = require("express");
+const secret = process.env.secret;
+const dotenv = require("dotenv").config();
 //@desc Register a user
 //@route post /api/v1/users/register
 // access:public
@@ -13,17 +15,17 @@ const registerController = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("All fields are mandatory!!");
   }
-  const userAvailable = await userModel.findOne({email});
-  if (userAvailable){
+  const userAvailable = await userModel.findOne({ email });
+  if (userAvailable) {
     res.status(400);
     throw new Error("User already registered!!");
   }
-  const hashedPassword = await bcrypt.hash(password,10);
-  console.log("Hashed Password : ",hashedPassword);
-  
-  const newUser = await userModel.create({ username, email, password:hashedPassword });
+  const hashedPassword = await bcrypt.hash(password, 10);
+  console.log("Hashed Password : ", hashedPassword);
+
+  const newUser = await userModel.create({ username, email, password: hashedPassword });
   res.json({
-    message: "user registered successfuly!!",newUser 
+    message: "user registered successfuly!!", newUser
   })
 });
 
@@ -32,7 +34,35 @@ const registerController = asyncHandler(async (req, res) => {
 //@route post /api/v1/users/login
 // access:public
 const loginController = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory!!");
+  }
  
+  const user = await userModel.findOne({ email });
+
+  //comparison between user entered password and hashed password of registered user.
+ 
+  const hashedPassword = await bcrypt.compare(password,user.password);
+  console.log(hashedPassword);
+  if(user && hashedPassword){
+    const token =  jwt.sign(
+      {
+        user:{
+          username:user.username,
+          email:user.email,
+          id:user._id
+        }
+      }
+      ,secret,{expiresIn:"1m"});
+
+      res.json({token});
+  }else{
+    res.status(401);
+    throw new Error("Invalid Credentials!!");
+  }
 });
 
 

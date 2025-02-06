@@ -1,20 +1,32 @@
 const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
 
 const secret = process.env.secret;
-function middleware(req, res, next) {
+const validateToken = asyncHandler(async (req, res, next) => {
 
-    const token = req.headers.token;
-    console.log(secret);
-    console.log("token is verifying");
-    const user = jwt.verify(token, secret);
-    console.log("token verified");
-    if (!user) {
-        res.status(400);
-        throw new Error("invalid token");
+    let token;
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+
+    if (authHeader && authHeader.startsWith("Bearer")) {
+        token = authHeader.split(" ");
+
+        jwt.verify(token[1], secret, (err, decodedInfo) => {
+            if (err) {
+                res.status(401);
+                throw new Error("User is not authorized");
+            }
+            req.user = decodedInfo.user;
+            next();
+        });
+
+        if(!token){
+            res.status(400);
+            throw new Error("User is not authorized or invalid token");
+        }
     }
-    req.user = user;
-    console.log(req.user);
-    next();
-}
 
-module.exports = middleware;
+
+
+})
+
+module.exports = validateToken;

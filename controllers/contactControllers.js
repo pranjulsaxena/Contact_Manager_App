@@ -67,9 +67,15 @@ const updateContact = asyncHandler (async(req,res)=>{
     // const {name,contact,email} = req.body;
     const contact_find = await contactModels.findById(req.params.id);
 
+
     if(!contact_find){
         res.status(404);
         throw new Error("Contact not Found");
+    }
+
+    if(contact_find.user_id.toString() != req.user.id.toString()){
+        res.status(400);
+        throw new Error("Access Denied !!");
     }
    
     const updated_contact = await contactModels.findByIdAndUpdate(req.params.id,req.body,{new:true});
@@ -90,7 +96,11 @@ const deleteContact = asyncHandler (async(req,res)=>{
         res.status(404);
         throw new Error("Contact not Found");
     }
-   await contactModels.findByIdAndDelete(req.params.id);
+    if(contact_find.user_id.toString() != req.user.id.toString()){
+        res.status(400);
+        throw new Error("Access Denied !!");
+    }
+   await contactModels.deleteOne(req.params.id);
     res.status(200).json(contact_find);
 });
 

@@ -15,10 +15,12 @@ const { getContacts,
         deleteContact
 
 } = require("../controllers/contactControllers");
+const validateToken = require("../middleware/userAuthentication");
 
 
 
 // below are defined multiple methods per route.
+Router.use(validateToken);
 Router.route("/")
     .get(getContacts)
     .post(createContact);

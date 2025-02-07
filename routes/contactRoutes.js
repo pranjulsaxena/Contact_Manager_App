@@ -18,9 +18,9 @@ const { getContacts,
 const validateToken = require("../middleware/userAuthentication");
 
 
-
-// below are defined multiple methods per route.
+// user who is logged in can only access contact creation, updation, deletion etc..
 Router.use(validateToken);
+// below are defined multiple methods per route.
 Router.route("/")
     .get(getContacts)
     .post(createContact);

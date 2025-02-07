@@ -56,7 +56,7 @@ const loginController = asyncHandler(async (req, res) => {
           id:user._id
         }
       }
-      ,secret);
+      ,secret,{expiresIn:"15m"});
 
       res.status(200).json({token});
   }else{

@@ -20,7 +20,8 @@ const contactModels = require("../models/contactModels");
 //@access private
 
 const getContacts = asyncHandler (async(req,res) =>{
-    const contacts = await contactModels.find();
+    // it will fetch all the contacts for user who is logged in. with the help of validateToken middleware
+    const contacts = await contactModels.find({user_id : req.user.id});
     res.status(200).json({contacts,message :"Get all contacts"});
 });
 
@@ -35,7 +36,7 @@ const createContact = asyncHandler (async(req,res) =>{
         res.status(400);
         throw new Error("All fields are mandatory!!");
     }
-    const createContact = await  contactModels.create({name,email,contact});
+    const createContact = await  contactModels.create({name,email,contact,user_id:req.user.id});
     res.status(201).json({createContact, message :"create Contact"});
 });
 
@@ -58,7 +59,7 @@ const getContact = asyncHandler (async(req,res)=>{
 
 
 
-//@desc Update  contact
+//@desc Update a  contact
 //@route PUT /api/contacts/:id
 //@access private
 
@@ -78,7 +79,7 @@ const updateContact = asyncHandler (async(req,res)=>{
 });
 
 
-//@desc DELETE  contact
+//@desc DELETE  a contact
 //@route DELETE /api/contacts/:id
 //@access private
 
